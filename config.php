@@ -11,7 +11,7 @@ function getDatabaseConfig(): array
         'socket' => getenv('DB_SOCKET') ?: '',
     ];
 
-    $databaseUrl = getenv('DATABASE_URL') ?: getenv('MYSQL_ADDON_URI') ?: '';
+    $databaseUrl = getenv('DATABASE_URL') ?: getenv('MYSQL_ADDON_URI') ?: 'mysql://unahcrallmdqs7qq:G5lYOObxVfCRBbTLjZT@b98n23uiof7zawx6bliz-mysql.services.clever-cloud.com:20158/b98n23uiof7zawx6bliz';
     if ($databaseUrl !== '') {
         $parsed = parse_url($databaseUrl);
         if ($parsed !== false) {

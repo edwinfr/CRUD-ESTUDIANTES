@@ -23,6 +23,8 @@
                 <button class="btn btn-primary" id="btnNuevo">Nuevo estudiante</button>
             </div>
 
+            <div id="formAlert" class="alert alert-success d-none mb-3" role="alert"></div>
+
             <div class="row g-2 mb-3">
                 <div class="col-md-5">
                     <input type="text" id="searchInput" class="form-control" placeholder="Buscar por nombre o grado">
@@ -173,6 +175,18 @@
             });
         }
 
+        function showMessage(message, type = 'success') {
+            $('#formAlert')
+                .removeClass('d-none alert-success alert-danger alert-warning')
+                .addClass(`alert-${type}`)
+                .text(message)
+                .removeClass('d-none');
+        }
+
+        function hideMessage() {
+            $('#formAlert').addClass('d-none').text('');
+        }
+
         function renderPagination(pagination) {
             const { page, totalPages } = pagination;
             let html = '';
@@ -216,18 +230,20 @@
             $('#studentForm')[0].reset();
             $('#studentId').val('');
             $('#modalTitle').text('Nuevo estudiante');
+            hideMessage();
             studentModal.show();
         });
 
         $(document).on('click', '.btn-edit', function () {
             const id = $(this).data('id');
             $.getJSON('api.php', { action: 'details', id }).done(function (res) {
-                if (res.success && res.data) {
+                if (res && res.status === 'success' && res.data) {
                     $('#studentId').val(res.data.id);
                     $('#nombre').val(res.data.nombre);
                     $('#grado').val(res.data.grado);
                     $('#estado').val(res.data.estado);
                     $('#modalTitle').text('Editar estudiante');
+                    hideMessage();
                     studentModal.show();
                 }
             });
@@ -245,11 +261,11 @@
                 dataType: 'json',
                 data: { action: 'delete', id }
             }).done(function (res) {
-                if (res.success) {
+                if (res && res.status === 'success') {
                     loadStudents(currentPage);
-                    alert(res.message);
+                    showMessage(res.message || 'Estudiante eliminado correctamente.');
                 } else {
-                    alert(res.message);
+                    showMessage(res.message || 'No se pudo eliminar el estudiante.', 'danger');
                 }
             });
         });
@@ -263,12 +279,16 @@
                 dataType: 'json',
                 data: formData + '&action=save'
             }).done(function (res) {
-                if (res.success) {
+                if (res && res.status === 'success') {
                     studentModal.hide();
+                    $('.modal-backdrop').remove();
+                    $('body').removeClass('modal-open');
+                    $('#studentForm')[0].reset();
+                    $('#studentId').val('');
                     loadStudents(currentPage);
-                    alert(res.message);
+                    showMessage(res.message || 'Estudiante guardado correctamente.');
                 } else {
-                    alert(res.message);
+                    showMessage(res.message || 'No se pudo guardar el estudiante.', 'danger');
                 }
             });
         });

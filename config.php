@@ -3,11 +3,11 @@
 function getDatabaseConfig(): array
 {
     $config = [
-        'host' => getenv('DB_HOST') ?: getenv('MYSQL_ADDON_HOST') ?: getenv('MYSQL_HOST') ?: '127.0.0.1',
-        'port' => getenv('DB_PORT') ?: getenv('MYSQL_ADDON_PORT') ?: getenv('MYSQL_PORT') ?: '3306',
-        'username' => getenv('DB_USER') ?: getenv('DB_USERNAME') ?: getenv('MYSQL_ADDON_USER') ?: 'root',
-        'password' => getenv('DB_PASSWORD') ?: getenv('MYSQL_ADDON_PASSWORD') ?: '',
-        'database' => getenv('DB_NAME') ?: getenv('DB_DATABASE') ?: getenv('MYSQL_ADDON_DB') ?: 'sistema_estudiantes',
+        'host' => getenv('DB_HOST') ?: getenv('MYSQL_ADDON_HOST') ?: getenv('MYSQL_HOST') ?: 'b98n23uiof7zawx6bliz-mysql.services.clever-cloud.com',
+        'port' => getenv('DB_PORT') ?: getenv('MYSQL_ADDON_PORT') ?: getenv('MYSQL_PORT') ?: '20158',
+        'username' => getenv('DB_USER') ?: getenv('DB_USERNAME') ?: getenv('MYSQL_ADDON_USER') ?: 'unahcrallmdqs7qq',
+        'password' => getenv('DB_PASSWORD') ?: getenv('MYSQL_ADDON_PASSWORD') ?: 'G5lYOObxVfCRBbTLjZT',
+        'database' => getenv('DB_NAME') ?: getenv('DB_DATABASE') ?: getenv('MYSQL_ADDON_DB') ?: 'b98n23uiof7zawx6bliz',
         'socket' => getenv('DB_SOCKET') ?: '',
     ];
 

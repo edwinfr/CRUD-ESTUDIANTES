@@ -49,14 +49,14 @@ try {
 
             $whereSql = $where ? 'WHERE ' . implode(' AND ', $where) : '';
 
-            $countStmt = $pdo->prepare("SELECT COUNT(*) AS total FROM estudiantes {$whereSql}");
+            $countStmt = $pdo->prepare("select COUNT(*) AS total FROM estudiantes {$whereSql}");
             $countStmt->execute($params);
             $totalItems = (int)$countStmt->fetchColumn();
             $totalPages = max(1, (int)ceil($totalItems / $perPage));
             $offset = ($page - 1) * $perPage;
 
             $stmt = $pdo->prepare(
-                "SELECT id, nombre, grado, estado FROM estudiantes {$whereSql} ORDER BY id DESC LIMIT :limit OFFSET :offset"
+                "select id, nombre, grado, estado FROM estudiantes {$whereSql} ORDER BY id DESC LIMIT :limit OFFSET :offset"
             );
 
             foreach ($params as $key => $value) {
@@ -90,7 +90,7 @@ try {
         $id = (int)($_GET['id'] ?? 0);
 
         if ($pdo instanceof PDO) {
-            $stmt = $pdo->prepare('SELECT id, nombre, grado, estado FROM estudiantes WHERE id = :id');
+            $stmt = $pdo->prepare('select id, nombre, grado, estado FROM estudiantes WHERE id = :id');
             $stmt->execute([':id' => $id]);
             $student = $stmt->fetch();
         } else {
@@ -123,10 +123,10 @@ try {
 
         if ($pdo instanceof PDO) {
             if ($id > 0) {
-                $stmt = $pdo->prepare('UPDATE estudiantes SET nombre = :nombre, grado = :grado, estado = :estado WHERE id = :id');
+                $stmt = $pdo->prepare('update estudiantes SET nombre = :nombre, grado = :grado, estado = :estado WHERE id = :id');
                 $stmt->execute([':nombre' => $nombre, ':grado' => $grado, ':estado' => $estado, ':id' => $id]);
             } else {
-                $stmt = $pdo->prepare('INSERT INTO estudiantes (nombre, grado, estado) VALUES (:nombre, :grado, :estado)');
+                $stmt = $pdo->prepare('insert into estudiantes (nombre, grado, estado) VALUES (:nombre, :grado, :estado)');
                 $stmt->execute([':nombre' => $nombre, ':grado' => $grado, ':estado' => $estado]);
             }
         } else {

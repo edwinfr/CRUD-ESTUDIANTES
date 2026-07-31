@@ -1,5 +1,41 @@
 <?php
 
+function getDatabaseConfig(): array
+{
+    $config = [
+        'host' => getenv('DB_HOST') ?: getenv('MYSQL_ADDON_HOST') ?: getenv('MYSQL_HOST') ?: '127.0.0.1',
+        'port' => getenv('DB_PORT') ?: getenv('MYSQL_ADDON_PORT') ?: getenv('MYSQL_PORT') ?: '3306',
+        'username' => getenv('DB_USER') ?: getenv('DB_USERNAME') ?: getenv('MYSQL_ADDON_USER') ?: 'root',
+        'password' => getenv('DB_PASSWORD') ?: getenv('MYSQL_ADDON_PASSWORD') ?: '',
+        'database' => getenv('DB_NAME') ?: getenv('DB_DATABASE') ?: getenv('MYSQL_ADDON_DB') ?: 'sistema_estudiantes',
+        'socket' => getenv('DB_SOCKET') ?: '',
+    ];
+
+    $databaseUrl = getenv('DATABASE_URL') ?: getenv('MYSQL_ADDON_URI') ?: '';
+    if ($databaseUrl !== '') {
+        $parsed = parse_url($databaseUrl);
+        if ($parsed !== false) {
+            if (!empty($parsed['host'])) {
+                $config['host'] = $parsed['host'];
+            }
+            if (!empty($parsed['port'])) {
+                $config['port'] = (string)$parsed['port'];
+            }
+            if (!empty($parsed['user'])) {
+                $config['username'] = $parsed['user'];
+            }
+            if (!empty($parsed['pass'])) {
+                $config['password'] = $parsed['pass'];
+            }
+            if (!empty($parsed['path'])) {
+                $config['database'] = ltrim($parsed['path'], '/');
+            }
+        }
+    }
+
+    return $config;
+}
+
 function getPdo(): ?PDO
 {
     static $pdo = null;
@@ -8,12 +44,7 @@ function getPdo(): ?PDO
         return $pdo;
     }
 
-    $host = '127.0.0.1';
-    $port = 3306;
-    $username = 'root';
-    $password = '';
-    $database = 'sistema_estudiantes';
-    $socket = '/opt/lampp/var/mysql/mysql.sock';
+    $config = getDatabaseConfig();
 
     $options = [
         PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
@@ -22,9 +53,14 @@ function getPdo(): ?PDO
     ];
 
     try {
-        $pdo = new PDO("mysql:host={$host};port={$port};unix_socket={$socket};charset=utf8mb4", $username, $password, $options);
-        $pdo->exec("CREATE DATABASE IF NOT EXISTS `{$database}`");
-        $pdo->exec("USE `{$database}`");
+        $dsn = "mysql:host={$config['host']};port={$config['port']};charset=utf8mb4";
+        if ($config['socket'] !== '') {
+            $dsn .= ";unix_socket={$config['socket']}";
+        }
+
+        $pdo = new PDO($dsn, $config['username'], $config['password'], $options);
+        $pdo->exec("CREATE DATABASE IF NOT EXISTS `{$config['database']}`");
+        $pdo->exec("USE `{$config['database']}`");
         $pdo->exec(
             "CREATE TABLE IF NOT EXISTS estudiantes (
                 id INT AUTO_INCREMENT PRIMARY KEY,
